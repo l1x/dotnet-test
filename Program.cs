@@ -6,48 +6,50 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddResponseCompression(options =>
-{
-    options.EnableForHttps = true;
-    options.Providers.Add<BrotliCompressionProvider>();
-    options.Providers.Add<GzipCompressionProvider>();
+builder.Services.AddResponseCompression(options => {
+  options.EnableForHttps = true;
+  options.Providers.Add < BrotliCompressionProvider > ();
+  options.Providers.Add < GzipCompressionProvider > ();
 });
 
 var app = builder.Build();
 
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+if (app.Environment.IsDevelopment()) {
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 app.UseResponseCompression();
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+var summaries = new [] {
+  "Freezing",
+  "Bracing",
+  "Chilly",
+  "Cool",
+  "Mild",
+  "Warm",
+  "Balmy",
+  "Hot",
+  "Sweltering",
+  "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
+app.MapGet("/weatherforecast", () => {
+    var forecast = Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast(
+          DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+          Random.Shared.Next(-20, 55),
+          summaries[Random.Shared.Next(summaries.Length)]
         ))
-        .ToArray();
+      .ToArray();
     return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+  })
+  .WithName("GetWeatherForecast")
+  .WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+record WeatherForecast(DateOnly Date, int TemperatureC, string ? Summary) {
+  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
